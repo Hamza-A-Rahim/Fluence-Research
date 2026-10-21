@@ -67,6 +67,23 @@ def reference_baselines(y_true, train_positive_rate: float, seed: int = 0) -> di
     }
 
 
+def speaker_bootstrap_auc_ci(y_true, y_score, speakers, n_boot: int = 1000, seed: int = 0,
+                             alpha: float = 0.05) -> tuple[float, float]:
+    """Percentile CI for ROC-AUC, resampling speakers; skips resamples with one class."""
+    y_true, y_score = np.asarray(y_true).astype(int), np.asarray(y_score, float)
+    speakers = np.asarray(speakers).astype(str)
+    uniq = np.unique(speakers)
+    idx_by_spk = {s: np.flatnonzero(speakers == s) for s in uniq}
+    rng = np.random.default_rng(seed)
+    vals = []
+    for _ in range(n_boot):
+        idx = np.concatenate([idx_by_spk[s] for s in rng.choice(uniq, size=len(uniq), replace=True)])
+        if 0 < y_true[idx].sum() < len(idx):
+            vals.append(roc_auc_score(y_true[idx], y_score[idx]))
+    lo, hi = np.quantile(vals, [alpha / 2, 1 - alpha / 2])
+    return float(lo), float(hi)
+
+
 def speaker_bootstrap_ci(y_true, y_pred, speakers, metric: str = "f1",
                          n_boot: int = 1000, seed: int = 0, alpha: float = 0.05) -> tuple[float, float]:
     """Percentile CI for a metric, resampling speakers with replacement."""
