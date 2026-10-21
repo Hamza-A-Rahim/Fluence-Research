@@ -16,7 +16,7 @@ Most recent work treats stuttering detection as **clip classification**: given a
 
 **Multi-label detection (Bayerl et al., 2022, arXiv:2210.15982) — abstract read.** Argues dysfluencies frequently co-occur and should be modelled as multi-label rather than multi-class; a modified wav2vec 2.0 reached state-of-the-art results on SEP-28k-Extended and transferred across English and German datasets. *Supports our Stage 3 design (independent sigmoid outputs, not softmax).*
 
-**Multilingual detection (Haas & Bayerl, 2026, arXiv:2603.26939) — abstract read; to read in full.** Trained a multi-label detector on pooled English, German and Mandarin data from four corpora; multilingual training matched or beat earlier single-language systems, and the authors argue stuttering is acoustically consistent enough across languages to support language-agnostic detection. **This is the closest existing work to our question and must be read in full before we finalise the research question** — in particular whether it reports train-on-one/test-on-another results.
+**Multilingual detection (Haas & Bayerl, 2026, arXiv:2603.26939) — full text skimmed 21 Oct 2026.** Fine-tuned large wav2vec 2.0 (XLSR-53 weights, pretrained on 53 languages, worked best) with mean pooling, an independent sigmoid per event (multi-label), focal loss, and an auxiliary language-identification output. Corpora: SEP-28k-E and FluencyBank (English), KSoF (German), AS-70 (Mandarin). Key findings: (i) pooling all three languages ("TRILANG-LL") matched or beat single-language published baselines on most events; e.g. German word-repetition F1 rose from 0.14 to 0.35. (ii) **Cross-lingual transfer is partial**: a Mandarin-only model tested on English (SEP-28k-E) reached F1 0.22–0.46 vs 0.32–0.77 for in-language baselines, above chance but far below; an English+German model on Mandarin did better (e.g. Pro 0.60, Wd 0.56). (iii) Word repetitions benefit most from diverse data, which the authors attribute to a long-context "meta-pattern". (iv) Blocks remain the hardest event in every language (F1 0.15–0.64). They used SEP-28k-E, the same partition as Fluence. **No South Asian language was tested; the authors name the Boli dataset (Indian languages) as future work.** This is the gap Fluence's cross-language question addresses directly: does an English (or multilingual) detector transfer to Hindi/Urdu speech from the *same* speakers? Venue not stated on the arXiv page.
 
 **AS-70 (Gong et al., 2024) — abstract and summary read.** Mandarin dataset; wav2vec 2.0 beat StutterNet, ConvLSTM and Conformer on every label; blocks were hardest for every model — consistent with SEP-28k's low block agreement.
 
@@ -37,7 +37,7 @@ Most recent work treats stuttering detection as **clip classification**: given a
 
 ## 4. Open questions to resolve by reading
 
-1. Haas & Bayerl (2026): which corpora, which model, and is there zero-shot cross-language evaluation?
+1. ~~Haas & Bayerl (2026)~~ answered above: partial zero-shot transfer (Mandarin→English, English+German→Mandarin); no South Asian languages.
 2. What multilingual pretrained encoders (e.g. XLS-R, Whisper) have seen Urdu or Hindi, and does that matter for disfluency features?
 3. How do clinical frameworks treat interjections — as stuttering-like disfluencies or "other" disfluencies? (Affects our binary target; see decision D-005.)
 4. How have prior works handled clips with low annotator agreement — excluded, down-weighted, or modelled as soft labels?

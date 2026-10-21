@@ -13,6 +13,7 @@ Short records of choices that shape the project. Once **Decided**, we move on; r
 | D-007 | Code licence | **Open** |
 | D-008 | Primary evaluation partition: SEP-28k-E | Decided |
 | D-009 | Stage 2 baseline: logistic regression on clip-summary features | Decided |
+| D-010 | Stage 4 encoders: wav2vec2-base-960h and XLSR-53, frozen, mean+std pooled | Decided |
 
 ---
 
@@ -42,3 +43,7 @@ SEP-28k-E from SEP-28k-Extended as the fixed primary split, SEP-12k 5-fold CV as
 
 ### D-009 — Baseline model
 Logistic regression (class-balanced, standardised features) on 137 clip-summary features (log-mel, MFCC and delta statistics, energy/pause descriptors). **Why:** trains in seconds on a laptop, coefficients are interpretable, and it sets an honest floor. A random forest is run alongside as a non-linear check. Neural and pretrained-encoder models come in Stage 4 and must beat this under the same protocol.
+
+### D-010 — Stage 4 encoders (2026-10-21)
+Extract frozen embeddings from two wav2vec 2.0 models: **facebook/wav2vec2-base-960h** (English, ASR fine-tuned; the setup of Bayerl et al. 2022, for comparability) and **facebook/wav2vec2-large-xlsr-53** (pretrained on 53 languages; best in Haas & Bayerl 2026, and the natural candidate for the later Urdu-English work). Per layer, mean and standard deviation over frames; layer chosen on SEP28k-E dev only; logistic regression with the EXP-001/002 protocol. **Frozen, not fine-tuned**: it runs on a laptop CPU and isolates the effect of the representation. Fine-tuning (as in the papers) is a later option if a GPU becomes available. Both models are Apache-2.0 licensed on Hugging Face; the exact revision is recorded in each manifest.
+

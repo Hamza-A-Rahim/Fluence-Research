@@ -66,3 +66,22 @@ python scripts/train_baseline.py --partition SEP12k    # speaker-grouped cross-v
 ```
 
 The first run computes features for every clip (roughly 10–30 minutes); later runs reuse a cache and take a minute or two. Reports appear in `outputs\EXP-001\`. **Don't run `--evaluate-test` yet** — that's done once, at the end, and every use is logged.
+
+## Stage 4: wav2vec 2.0 embeddings (one-time, ~3 GB download)
+
+```powershell
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -e ".[deep]"
+pytest                                             # includes a tiny-model check of the Stage 4 code
+python scripts/extract_embeddings.py --limit 16    # quick real check, ~1–3 min (downloads both models)
+python scripts/extract_embeddings.py               # all clips, both models: several hours, leave it running
+```
+
+Resumable: if it stops (Ctrl+C, sleep, restart), run the same command again. Windows sleep pauses it, so set **Settings → System → Power → Screen and sleep → "When plugged in, put my device to sleep after: Never"** for the night.
+
+Afterwards (minutes each):
+```powershell
+python scripts/train_embeddings.py --model facebook/wav2vec2-base-960h
+python scripts/train_embeddings.py --model facebook/wav2vec2-large-xlsr-53
+```
+

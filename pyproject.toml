@@ -24,12 +24,12 @@ dev = ["pytest>=7.4"]
 audio-extras = ["librosa>=0.10", "soundfile>=0.12"]
 # Bundles an ffmpeg binary so scripts/fetch_sep28k.py works without a system install.
 fetch = ["imageio-ffmpeg>=0.5"]
-# Added at Stage 4 (neural models / pretrained encoders), not before.
-# deep = ["torch", "torchaudio", "transformers"]
+# Stage 4. Install PyTorch first from https://download.pytorch.org (see docs/setup_windows.md).
+deep = ["transformers>=4.40"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]   # tests work even before `pip install -e .`
+pythonpath = ["src", "tests"]   # tests work before `pip install -e .`; tests share helpers
