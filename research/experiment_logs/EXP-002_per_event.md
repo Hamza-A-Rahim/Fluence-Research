@@ -43,5 +43,5 @@ The random forest's F1 collapses to near zero in CV (0.002–0.165) at the defau
 Same as EXP-001 (3-speaker training set on SEP28k-E; 74 % of SEP-28k; not comparable to published numbers). κ values are from the original paper, not recomputed on our subset.
 
 ## Next steps
-- M1 listening check (`scripts/listen_examples.py`), especially prolongation and block clips.
+- ~~M1 listening check~~ done (`M1_listening_check.md`): prolongation labels audibly noisy in both directions; block labels sounded correct, so block weakness is the features.
 - Stage 4: time-aware representations. Target to beat: macro ROC-AUC 0.677; word repetition 0.64 and block 0.61 are the most informative tests.
