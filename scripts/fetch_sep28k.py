@@ -92,13 +92,40 @@ def find_ffmpeg() -> str:
     sys.exit("ffmpeg not found. Run:  pip install imageio-ffmpeg   (or install ffmpeg and add it to PATH)")
 
 
-def http_get(url: str, dest: Path, timeout: float = 60.0, tries: int = 3) -> None:
+MAX_DOWNLOAD_S = 20 * 60   # give up on one episode after 20 minutes
+MIN_RATE_BPS = 20_000      # ...or if it averages under 20 KB/s after the first minute
+
+
+def _copy_with_deadline(r, f, label: str) -> None:
+    """Copy a response to disk, printing progress and aborting stalled transfers."""
+    start = last_print = time.time()
+    got = 0
+    total = int(r.headers.get("Content-Length") or 0)
+    while True:
+        chunk = r.read(1 << 20)
+        if not chunk:
+            return
+        f.write(chunk)
+        got += len(chunk)
+        now = time.time()
+        elapsed = now - start
+        if elapsed > MAX_DOWNLOAD_S:
+            raise TimeoutError(f"download exceeded {MAX_DOWNLOAD_S // 60} min")
+        if elapsed > 60 and got / elapsed < MIN_RATE_BPS:
+            raise TimeoutError(f"too slow ({got / elapsed / 1000:.0f} KB/s)")
+        if now - last_print > 30:
+            of = f" of {total / 1e6:.0f}" if total else ""
+            print(f"      ... {label}: {got / 1e6:.0f}{of} MB", flush=True)
+            last_print = now
+
+
+def http_get(url: str, dest: Path, timeout: float = 60.0, tries: int = 3, label: str = "") -> None:
     last = None
     for attempt in range(1, tries + 1):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=timeout) as r, open(dest, "wb") as f:
-                shutil.copyfileobj(r, f, length=1 << 20)
+                _copy_with_deadline(r, f, label or dest.name)
             if dest.stat().st_size < 10_000:
                 raise IOError(f"suspiciously small download ({dest.stat().st_size} bytes)")
             return
@@ -191,8 +218,9 @@ def process_episode(ep: dict, clips: list[dict], ffmpeg: str, keep_episode: bool
     ext = next((e for e in (".mp3", ".m4a", ".mp4") if e in url.lower()), ".mp3")
     TMP.mkdir(parents=True, exist_ok=True)
     tmp = TMP / f"{show}_{ep_id}{ext}"
+    print(f"    start  {show} ep {ep_id}", flush=True)
     try:
-        http_get(url, tmp)
+        http_get(url, tmp, label=f"{show} ep {ep_id}")
         audio = decode_16k_mono(ffmpeg, tmp)
     except Exception as e:
         row.update(status="unavailable", detail=str(e)[:200])
@@ -303,7 +331,7 @@ def main() -> None:
                 save_log(log)  # save after every episode so progress survives interruption
                 done += 1
                 print(f"[{done}/{len(todo)}] {row['show']:<12} ep {row['ep_id']:>3}: {row['status']:<16}"
-                      f" {row['n_clips_written']}/{row['n_clips_expected']} clips {row['detail'][:60]}")
+                      f" {row['n_clips_written']}/{row['n_clips_expected']} clips {row['detail'][:60]}", flush=True)
     except KeyboardInterrupt:
         print("\nStopped. Progress is saved; run the same command again to resume.")
         return
