@@ -57,3 +57,12 @@ python scripts/fetch_sep28k.py                  # everything (a few hours; needs
 - Safe to stop with **Ctrl+C** and re-run — it resumes where it left off.
 - Results: clips in `data\interim\sep28k_clips\`, a per-episode log in `data\metadata\sep28k_fetch_log.csv`.
 - Nothing in `data\` is ever uploaded to GitHub (it's git-ignored).
+
+## 6. Train the baseline (once clips exist)
+
+```powershell
+python scripts/train_baseline.py                       # train + dev results (test untouched)
+python scripts/train_baseline.py --partition SEP12k    # speaker-grouped cross-validation
+```
+
+The first run computes features for every clip (roughly 10–30 minutes); later runs reuse a cache and take a minute or two. Reports appear in `outputs\EXP-001\`. **Don't run `--evaluate-test` yet** — that's done once, at the end, and every use is logged.

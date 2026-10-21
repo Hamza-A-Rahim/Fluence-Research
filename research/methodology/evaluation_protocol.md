@@ -24,6 +24,7 @@ For each event type and for "any event":
 - **Confusion matrix** (binary) per label.
 - **Threshold-free:** ROC-AUC and average precision (PR-AUC), so models can be compared without a chosen threshold.
 - **Reference baselines in every table:** majority class, and random guessing at the training positive rate. A model is only interesting relative to these.
+- **Why this matters here (from EXP-000):** with interjections counted, 51 % of usable clips contain an event. A "model" that always answers *event* then has precision 0.51, recall 1.0 and **F1 ≈ 0.675** without listening to anything. Lea et al. (2021) report "any event" F1 of 66.8 on SEP-28k; their positive-class definition and split differ from ours, so this is not a like-for-like comparison, but it shows F1 alone cannot tell a useful detector from a trivial one on this target. **ROC-AUC and PR-AUC are therefore the primary comparison metrics for the binary task**, with F1 reported alongside the always-event baseline.
 - Multi-label (Stage 3): per-label metrics, macro-F1 across the five events, and the number of clips where predicted label *sets* match exactly.
 - **Uncertainty:** 95 % bootstrap confidence intervals over **speakers** (resample speakers, not clips — clips from one speaker are not independent).
 - **Context:** report per-label results next to annotator agreement (Fleiss κ). Low-κ labels (prolongation 0.11, block 0.25) get explicitly cautious interpretation.

@@ -24,7 +24,7 @@ Fluence is an independent research project by Hamza Rahim (Aitchison College, La
 | Waveform + spectrogram inspection figure | ✅ tested |
 | SEP-28k download + clip extraction (Windows/macOS/Linux, resumable, logged) | ✅ tested on synthetic episodes; real run pending |
 | Label & partition analysis of real SEP-28k metadata | ✅ [EXP-000](research/experiment_logs/EXP-000_sep28k_label_analysis.md) |
-| Baseline classifier, evaluation reports | ⏳ Stage 2 |
+| Baseline classifier (logistic regression, random forest), metrics with speaker-bootstrap CIs, baselines, confusion matrices, test-set access log | ✅ code tested on synthetic clips; **no real results yet** — needs the SEP-28k download |
 | Web interface, backend API | ⏳ deliberately deferred until a baseline is evaluated |
 
 ## Repository layout
