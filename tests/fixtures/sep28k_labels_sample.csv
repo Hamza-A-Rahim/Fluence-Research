@@ -1,0 +1,9 @@
+Show,EpId,ClipId,Start,Stop,Unsure,PoorAudioQuality,Prolongation,Block,SoundRep,WordRep,DifficultToUnderstand,Interjection,NoStutteredWords,NaturalPause,Music,NoSpeech
+ShowA, 0, 0, 1000, 49000, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0
+ShowA, 0, 1, 50000, 98000, 0, 0, 0, 1, 2, 0, 0, 0, 1, 0, 0, 0
+ShowA, 0, 2, 100000, 148000, 0, 0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0
+ShowA, 1, 0, 2000, 50000, 0, 0, 1, 0, 0, 1, 0, 0, 2, 0, 0, 0
+ShowB, 0, 0, 0, 48000, 0, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0, 0
+ShowB, 0, 1, 48000, 96000, 0, 0, 0, 2, 0, 0, 0, 1, 1, 1, 0, 0
+ShowB, 1, 0, 0, 48000, 0, 3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0
+ShowB, 1, 1, 48000, 96000, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0

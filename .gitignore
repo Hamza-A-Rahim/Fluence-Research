@@ -1,0 +1,107 @@
+# ============================================================
+# Fluence — what must NEVER be committed
+# ============================================================
+
+# ---- Audio and datasets (privacy + licence) --------------------
+# Recordings can identify people. Research datasets have their own licences
+# (SEP-28k: CC BY-NC 4.0, audio copyright stays with podcast owners;
+# FluencyBank: members only). Keep them on your machine only.
+data/raw/*
+data/interim/*
+data/processed/*
+data/external/*
+data/metadata/*
+!data/*/.gitkeep
+!data/README.md
+
+*.wav
+*.WAV
+*.mp3
+*.m4a
+*.flac
+*.ogg
+*.opus
+*.aac
+*.wma
+*.aiff
+*.aif
+*.webm
+*.mp4
+*.mov
+*.cha
+# Allow small synthetic test fixtures only (no real speech)
+!tests/fixtures/*.csv
+
+# ---- Model weights and training artefacts -----------------------
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.joblib
+*.pkl
+*.pickle
+*.npy
+*.npz
+*.h5
+*.hdf5
+checkpoints/
+runs/
+wandb/
+mlruns/
+lightning_logs/
+outputs/*
+!outputs/.gitkeep
+
+# ---- Hugging Face / model caches -------------------------------
+.cache/
+hf_cache/
+.huggingface/
+
+# ---- Credentials and secrets ----------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials*.json
+service-account*.json
+token*.json
+
+# ---- Python ----------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- Jupyter ---------------------------------------------------
+.ipynb_checkpoints/
+# Notebooks are allowed, but clear outputs before committing
+# (outputs can embed audio or participant data).
+
+# ---- Node / frontend (later) ------------------------------------
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+
+# ---- OS / editors ----------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
