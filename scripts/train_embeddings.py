@@ -42,7 +42,7 @@ import numpy as np  # noqa: E402
 import sklearn  # noqa: E402
 from sklearn.model_selection import StratifiedGroupKFold  # noqa: E402
 
-from fluence.data.datasets import load_available_clips  # noqa: E402
+from fluence.data.datasets import cv_pool, load_available_clips  # noqa: E402
 from fluence.data.sep28k import EVENT_LABELS, any_stutter_target, binarize  # noqa: E402
 from fluence.data.splits import check_no_leakage  # noqa: E402
 from fluence.evaluation.metrics import (  # noqa: E402
@@ -141,7 +141,7 @@ def main() -> None:
               f"F1 {d['f1']:.3f}  PR-AUC {d['average_precision']:.3f}", flush=True)
 
     # 3. SEP-12k CV (fixed C = 0.01: no tuning inside folds)
-    m12 = (all_df["SEP12k"].astype(str) == "train").to_numpy()
+    m12 = all_df.index.isin(cv_pool(all_df).index)  # D-011: test clips excluded
     df12, X12 = all_df[m12].reset_index(drop=True), X_all[m12][:, best]
     spk12 = df12["speaker"].astype(str).to_numpy()
     T12 = targets(df12)
@@ -213,7 +213,7 @@ def write_report(r: dict, path: Path) -> None:
         base = f"{C[name]:.3f}" if name in C else "–"
         L.append(f"| {PLAIN.get(name, name.replace('_', ' '))} | {d['roc_auc']:.3f} [{d['auc_ci'][0]:.3f}, {d['auc_ci'][1]:.3f}] | "
                  f"{base} | {d['f1']:.3f} | {d['baselines']['majority']['f1']:.3f} | {d['average_precision']:.3f} | {prev:.3f} |")
-    L += ["", f"## SEP-12k speaker-grouped CV ({r['SEP12k']['n']} clips, {r['SEP12k']['speakers']} speakers)", "",
+    L += ["", f"## SEP-12k dev-only speaker-grouped CV, test excluded (D-011) ({r['SEP12k']['n']} clips, {r['SEP12k']['speakers']} speakers)", "",
           "| Target | ROC-AUC | F1 | PR-AUC |", "|---|---|---|---|"]
     for name in ["any_with_interjections", "any_without_interjections"] + EVENT_LABELS:
         a = r["SEP12k"][name]

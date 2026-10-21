@@ -87,5 +87,14 @@ class TestSplits(unittest.TestCase):
             group_split(["a"], fractions=(0.5, 0.5, 0.5))
 
 
+class TestCvPool(unittest.TestCase):
+    def test_excludes_test_clips(self):
+        import pandas as pd
+        from fluence.data.datasets import cv_pool
+        df = pd.DataFrame({"SEP12k": ["train", "train", "train", None],
+                           "SEP28k-E": ["dev", "test", "train", "dev"]})
+        self.assertEqual(cv_pool(df).index.tolist(), [0])
+
+
 if __name__ == "__main__":
     unittest.main()

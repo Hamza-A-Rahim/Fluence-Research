@@ -55,6 +55,7 @@ from sklearn.preprocessing import StandardScaler  # noqa: E402
 
 from fluence.data.clips import attach_clip_paths, compute_features  # noqa: E402
 from fluence.data.sep28k import any_stutter_target, exclude_unusable, load_labels  # noqa: E402
+from fluence.data.datasets import cv_pool  # noqa: E402
 from fluence.data.splits import check_no_leakage, split_report  # noqa: E402
 from fluence.evaluation.metrics import (  # noqa: E402
     binary_report, reference_baselines, speaker_bootstrap_ci,
@@ -146,7 +147,7 @@ def main() -> None:
     df = df[df["available"]]
     n_avail = len(df)
     if args.partition == "SEP12k":
-        df = df[df["SEP12k"].astype(str) == "train"]
+        df = cv_pool(df)  # D-011: SEP-12k minus the SEP28k-E test clips
     else:
         df = df[df[args.partition].isin(["train", "dev", "test"])]
     if len(df) == 0:
@@ -254,7 +255,7 @@ def write_report(r: dict, path: Path) -> None:
     for tname, t in r["targets"].items():
         L += [f"## Target: any event, {tname.replace('_', ' ')}", ""]
         if r["partition"] == "SEP12k":
-            L += ["Speaker-grouped CV, mean ± SD across folds.", "",
+            L += ["Speaker-grouped CV on SEP-12k dev clips only (test excluded, D-011), mean ± SD across folds.", "",
                   "| Model | Precision | Recall | F1 | ROC-AUC | PR-AUC |", "|---|---|---|---|---|---|"]
             for m in GRIDS:
                 a = t[m]["mean_sd"]

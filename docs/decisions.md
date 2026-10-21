@@ -14,6 +14,7 @@ Short records of choices that shape the project. Once **Decided**, we move on; r
 | D-008 | Primary evaluation partition: SEP-28k-E | Decided |
 | D-009 | Stage 2 baseline: logistic regression on clip-summary features | Decided |
 | D-010 | Stage 4 encoders: wav2vec2-base-960h and XLSR-53, frozen, mean+std pooled | Decided |
+| D-011 | Cross-validation excludes the SEP28k-E test clips (correction) | Decided |
 
 ---
 
@@ -46,4 +47,7 @@ Logistic regression (class-balanced, standardised features) on 137 clip-summary 
 
 ### D-010 — Stage 4 encoders (2026-10-21)
 Extract frozen embeddings from two wav2vec 2.0 models: **facebook/wav2vec2-base-960h** (English, ASR fine-tuned; the setup of Bayerl et al. 2022, for comparability) and **facebook/wav2vec2-large-xlsr-53** (pretrained on 53 languages; best in Haas & Bayerl 2026, and the natural candidate for the later Urdu-English work). Per layer, mean and standard deviation over frames; layer chosen on SEP28k-E dev only; logistic regression with the EXP-001/002 protocol. **Frozen, not fine-tuned**: it runs on a laptop CPU and isolates the effect of the representation. Fine-tuning (as in the papers) is a later option if a GPU becomes available. Both models are Apache-2.0 licensed on Hugging Face; the exact revision is recorded in each manifest.
+
+### D-011 — Cross-validation must not touch the test set (correction, 2026-10-21)
+**Error found:** the SEP-12k partition is exactly SEP28k-E dev ∪ test (verified: 3,855 dev + 3,965 test clips). The SEP-12k cross-validation in EXP-001, EXP-002 and the first EXP-003 run therefore trained and scored on held-out test clips. No hyper-parameters were tuned on those runs, but design conclusions (e.g. "features, not speaker count, are the bottleneck") partly drew on them. **Fix:** CV now uses only the SEP28k-E dev clips (`fluence.data.datasets.cv_pool`): 3,855 clips, 136 speakers. All CV results were re-run and the logs corrected; the superseded numbers are kept in each log, marked as such. The SEP28k-E test set has never been used for model selection and remains unevaluated.
 

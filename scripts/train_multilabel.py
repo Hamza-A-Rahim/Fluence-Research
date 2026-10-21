@@ -44,7 +44,7 @@ import sklearn  # noqa: E402
 from sklearn.model_selection import StratifiedGroupKFold  # noqa: E402
 
 from fluence.data.clips import compute_features  # noqa: E402
-from fluence.data.datasets import load_available_clips  # noqa: E402
+from fluence.data.datasets import cv_pool, load_available_clips  # noqa: E402
 from fluence.data.sep28k import EVENT_LABELS, binarize  # noqa: E402
 from fluence.data.splits import check_no_leakage  # noqa: E402
 from fluence.evaluation.metrics import binary_report, speaker_bootstrap_auc_ci  # noqa: E402
@@ -152,7 +152,7 @@ def main() -> None:
     }
 
     # ---------------- SEP-12k CV
-    df12 = all_df[all_df["SEP12k"].astype(str) == "train"]
+    df12 = cv_pool(all_df)  # D-011: test clips excluded
     X12, _, ok12 = compute_features(df12["path"].tolist(), FeatureConfig(), cache_dir=args.cache, progress=True)
     df12, X12 = df12[ok12].reset_index(drop=True), X12[ok12]
     Y12 = binarize(df12, EVENT_LABELS).to_numpy()
@@ -202,7 +202,7 @@ def write_report(r: dict, path: Path) -> None:
           f"- Exact label-set match {ml['exact_set_match']:.3f} (predicting 'no events' for every clip: "
           f"{ml['exact_set_match_all_negative_baseline']:.3f})",
           f"- Labels per clip: true {ml['mean_true_labels_per_clip']:.2f}, predicted {ml['mean_predicted_labels_per_clip']:.2f}",
-          "", f"## SEP-12k speaker-grouped CV ({r['SEP12k']['n']} clips, {r['SEP12k']['speakers']} speakers)", "",
+          "", f"## SEP-12k dev-only speaker-grouped CV, test excluded (D-011) ({r['SEP12k']['n']} clips, {r['SEP12k']['speakers']} speakers)", "",
           "| Event | Prevalence | Model | F1 | ROC-AUC | PR-AUC |", "|---|---|---|---|---|---|"]
     for e in EVENT_LABELS:
         for m in GRIDS:

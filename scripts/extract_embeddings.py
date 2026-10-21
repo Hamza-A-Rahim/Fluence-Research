@@ -61,6 +61,18 @@ def load_model(name: str, device: str):
     return fe, model
 
 
+def model_revision(name: str) -> str | None:
+    """Exact commit of the downloaded checkpoint, read from the local Hugging Face cache."""
+    try:
+        from huggingface_hub import try_to_load_from_cache
+        path = try_to_load_from_cache(name, "config.json")
+        if isinstance(path, str):
+            return Path(path).parent.name  # .../snapshots/<commit-sha>/config.json
+    except Exception:
+        pass
+    return None
+
+
 def embed_batch(fe, model, waves: list[np.ndarray], device: str):
     import torch
     inputs = fe(waves, sampling_rate=TARGET_SR, return_tensors="pt", padding=True)
@@ -92,7 +104,7 @@ def run_model(name: str, df, out_root: Path, batch: int, device: str, limit: int
     print("Loading model (first time downloads it)...", flush=True)
     fe, model = load_model(name, device)
     (out_dir / "manifest.json").write_text(json.dumps({
-        "model": name, "revision": getattr(model.config, "_commit_hash", None),
+        "model": name, "revision": getattr(model.config, "_commit_hash", None) or model_revision(name),
         "n_layers_including_cnn_output": model.config.num_hidden_layers + 1,
         "hidden_size": model.config.hidden_size, "pooling": "mean and std over frames, per layer",
         "sample_rate": TARGET_SR, "device": device, "torch": torch.__version__,
