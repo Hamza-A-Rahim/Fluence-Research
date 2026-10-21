@@ -57,7 +57,7 @@ fluence-research/
 Requires Python 3.10+.
 
 ```bash
-git clone https://github.com/<your-username>/fluence-research.git
+git clone https://github.com/Hamza-A-Rahim/Fluence-Research.git
 cd fluence-research
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
