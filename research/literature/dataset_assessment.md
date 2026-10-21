@@ -11,7 +11,7 @@
 | Labels | 5 events + fluent + quality labels, 3 annotators each, multi-label | same + speaker IDs, gender, 4 partitionings | CHAT transcripts | 5 events + *modified speech* | 5 events, character level | 5 events, word level with timestamps |
 | Audio included? | **No** — download from podcast URLs | **No** | Yes, for members | On request | Download link (licence **unverified**) | Stated open access (licence **unverified**) |
 | Licence | Annotations CC BY-NC 4.0; audio © podcast owners | CC BY-NC 4.0 | Members only; CC BY-NC-SA badge on site | Research use on request | **unverified** | **unverified** |
-| Usable by us now? | Labels yes (analysed: EXP-000); audio being retrieved (D-006) | Yes (metadata) | **No** — needs a faculty sponsor | Needs a request | Check terms | Check terms |
+| Usable by us now? | Yes — 74 % of clips retrieved (EXP-000 addendum) | Yes (metadata) | **No** — needs a faculty sponsor | Needs a request | Check terms | Check terms |
 
 ## 1. SEP-28k (Apple, 2021)
 
@@ -20,7 +20,7 @@
 - **Format check (done).** `SEP-28k_labels.csv` columns: `Show, EpId, ClipId, Start, Stop` + the label counts. Start/Stop are sample indices; every row we inspected spans exactly 48,000 samples (3 s at 16 kHz). Values have a space after each comma — our parser handles this and is tested against a synthetic copy of the format. `SEP-28k_episodes.csv` has **no header**; columns are show name, episode label, audio URL, show tag, episode index; 385 rows across 8 shows.
 - **Class balance (≥2 of 3 annotators, from the paper).** Block 12.0 %, Prolongation 10.0 %, SoundRep 8.3 %, WordRep 9.8 %, Interjection 21.2 %, No dysfluency 56.9 %.
 - **Annotation reliability (Fleiss κ).** Word repetition 0.62, interjection 0.57, sound repetition 0.40, fluent 0.39, block 0.25, prolongation 0.11. **This sets a ceiling:** a model cannot be reliably "right" about prolongations when humans agree so little. Any per-class result must be read against these values.
-- **Audio access.** Not distributed. Apple's `download_audio.py` fetches episodes from the original hosts. Podcast URLs from 2011–2020 may have died; the number still available is **unknown** until `scripts/fetch_sep28k.py --check-only` is run on a normal internet connection.
+- **Audio access.** Not distributed. Apple's `download_audio.py` fetches episodes from the original hosts. Podcast URLs from 2011–2020 may have died; as of 21 Oct 2026, **258 of 385 episodes (20,896 of 28,177 clips, 74 %)** were retrievable; StrongVoices and StutteringIsCool are entirely offline. Details in the EXP-000 addendum.
 - **Speakers.** No speaker IDs in the original release — the gap SEP-28k-Extended fills.
 
 ## 2. SEP-28k-Extended (TH Nürnberg, 2022)

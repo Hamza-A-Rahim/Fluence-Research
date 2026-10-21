@@ -61,3 +61,39 @@ Retrieve audio (`scripts/fetch_sep28k.py`), re-run this analysis restricted to r
 
 ## Environment
 Python 3.13, pandas 3.0.5, numpy 2.5.3. Runtime < 5 s.
+
+---
+
+## Addendum (2026-10-21): what was actually retrieved
+
+Audio retrieved locally with `scripts/fetch_sep28k.py` (log: `data/metadata/sep28k_fetch_log.csv`, not committed).
+
+- **Episodes:** 258 retrieved (248 ok + 10 length-mismatch) of 385; 127 unavailable — StrongVoices (35, HTTP 404), StutteringIsCool (85, 404), IStutterSoWhat (5, HTTP 522 server not responding), MyStutteringLife (2, 404).
+- **Clips:** 20,896 of 28,177 (74.2 %); **19,516 usable** after quality exclusions (vs 26,215).
+- **Length mismatches are benign.** In all 10 cases the downloaded file is only 0.14–0.46 s shorter than the end of the last labelled clip, so exactly one final clip per episode was dropped. A shortfall this small is consistent with MP3 decoder padding differences, not re-edited episodes; re-edits would shift by seconds or minutes. Earlier clips in these episodes are kept. *Still to do: the M1 listening check on a few clips from these episodes.*
+
+**Label balance — published vs retrieved (usable clips, ≥2 votes)**
+
+| | Published | Retrieved |
+|---|---|---|
+| Prolongation | 10.2 % | 9.9 % |
+| Block | 11.9 % | 12.0 % |
+| Sound repetition | 8.2 % | 8.7 % |
+| Word repetition | 10.3 % | 11.7 % |
+| Interjection | 22.2 % | 23.6 % |
+| Any event (incl. interjections) | 51.0 % | 53.3 % |
+| Any event (excl. interjections) | 36.1 % | 37.6 % |
+
+Losing three podcasts shifts prevalence by at most ~1.4 points; no class is depleted.
+
+**Partitions after retrieval**
+
+| SEP28k-E | Clips | Speakers | "Any event" rate |
+|---|---|---|---|
+| train | 11,696 / 14,092 | **3 / 4** | 53.3 % |
+| dev | 3,855 / 5,932 | 136 / 245 | 53.5 % |
+| test | 3,965 / 6,191 | 142 / 244 | 53.3 % |
+
+SEP-12k (for speaker-grouped CV): 7,820 of 11,972 usable clips, 278 speakers.
+
+**Consequence.** The lost training speaker is the StutteringIsCool host, so SEP28k-E now trains on three voices. **Our SEP28k-E numbers are therefore not directly comparable with papers that had the full dataset**, and that must be stated wherever they are reported. SEP-12k CV (278 training speakers) becomes the more informative estimate of generalisation.
