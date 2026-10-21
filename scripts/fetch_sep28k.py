@@ -51,6 +51,14 @@ import numpy as np
 from scipy.io import wavfile
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Windows consoles and pipes may default to a legacy code page (cp1252) that
+# cannot print characters like κ or ±; never crash on output.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 META = ROOT / "data" / "metadata"
 CLIPS = ROOT / "data" / "interim" / "sep28k_clips"
 EPISODES = ROOT / "data" / "raw" / "sep28k_episodes"

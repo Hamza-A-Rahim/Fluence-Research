@@ -13,6 +13,15 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+
+# Windows consoles and pipes may default to a legacy code page (cp1252) that
+# cannot print characters like κ or ±; never crash on output.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))

@@ -23,6 +23,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Windows consoles and pipes may default to a legacy code page (cp1252) that
+# cannot print characters like κ or ±; never crash on output.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 sys.path.insert(0, str(ROOT / "src"))
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
