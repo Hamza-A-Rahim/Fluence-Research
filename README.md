@@ -27,6 +27,7 @@ Fluence is an independent research project by Hamza Rahim (Aitchison College, La
 | Baseline classifier (logistic regression, random forest), metrics with speaker-bootstrap CIs, baselines, test-set access log | ✅ [EXP-001](research/experiment_logs/EXP-001_baseline.md): ROC-AUC ≈ 0.65–0.66 (dev / CV) |
 | Per-event (multi-label) detection | ✅ [EXP-002](research/experiment_logs/EXP-002_per_event.md): prolongation easiest (0.74), block hardest (0.60) |
 | Listening check page (M1) | ✅ `scripts/listen_examples.py` |
+| Pretrained encoder (wav2vec 2.0, frozen) | ✅ [EXP-003](research/experiment_logs/EXP-003_wav2vec2.md): dev ROC-AUC **0.817** (from 0.653); every event improves; XLSR-53 run pending |
 | Web interface, backend API | ⏳ deliberately deferred until a baseline is evaluated |
 
 ## Repository layout
