@@ -22,6 +22,8 @@ Fluence is an independent research project by Hamza Rahim (Aitchison College, La
 | SEP-28k label parsing, majority-vote binarisation, multi-label summaries | ✅ tested (synthetic fixture) |
 | Speaker/episode-grouped splitting with an automatic leakage check | ✅ tested |
 | Waveform + spectrogram inspection figure | ✅ tested |
+| SEP-28k download + clip extraction (Windows/macOS/Linux, resumable, logged) | ✅ tested on synthetic episodes; real run pending |
+| Label & partition analysis of real SEP-28k metadata | ✅ [EXP-000](research/experiment_logs/EXP-000_sep28k_label_analysis.md) |
 | Baseline classifier, evaluation reports | ⏳ Stage 2 |
 | Web interface, backend API | ⏳ deliberately deferred until a baseline is evaluated |
 
@@ -54,7 +56,7 @@ fluence-research/
 
 ## Quick start
 
-Requires Python 3.10+.
+Requires Python 3.10+. **On Windows, follow [docs/setup_windows.md](docs/setup_windows.md)** — it covers installation and downloading the data step by step.
 
 ```bash
 git clone https://github.com/Hamza-A-Rahim/Fluence-Research.git

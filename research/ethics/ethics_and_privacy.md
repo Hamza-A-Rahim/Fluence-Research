@@ -11,7 +11,7 @@
 
 ## Current stage: public research datasets only
 
-- Allowed: published annotations; audio whose provider's scripts make it available for research, after decision D-006; synthetic audio for testing.
+- Allowed: published annotations; audio whose provider's scripts make it available for research, as agreed in decision D-006 (local, non-commercial, never redistributed); synthetic audio for testing.
 - Not allowed: recording anyone (including friends or classmates), collecting audio through a website, or using the project lead's own recordings in a dataset that will be shared or published.
 
 ## Before any recording of human participants

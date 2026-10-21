@@ -22,6 +22,8 @@ dependencies = [
 dev = ["pytest>=7.4"]
 # Optional: used only to cross-check our feature extraction.
 audio-extras = ["librosa>=0.10", "soundfile>=0.12"]
+# Bundles an ffmpeg binary so scripts/fetch_sep28k.py works without a system install.
+fetch = ["imageio-ffmpeg>=0.5"]
 # Added at Stage 4 (neural models / pretrained encoders), not before.
 # deep = ["torch", "torchaudio", "transformers"]
 

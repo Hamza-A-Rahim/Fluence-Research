@@ -62,7 +62,9 @@ def binarize(df: pd.DataFrame, labels: list[str] | None = None, min_votes: int =
     if not 1 <= min_votes <= 3:
         raise ValueError("min_votes must be 1, 2 or 3")
     labels = labels or EVENT_LABELS
-    return (df[labels] >= min_votes).astype(np.int8)
+    # int64, not int8: sums and matrix products over ~28k clips overflow int8
+    # silently (found when a co-occurrence table showed negative counts).
+    return (df[labels] >= min_votes).astype(np.int64)
 
 
 def any_stutter_target(df: pd.DataFrame, min_votes: int = 2,

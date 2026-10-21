@@ -40,6 +40,14 @@ class TestLabels(unittest.TestCase):
     def test_multilabel_clips_are_counted(self):
         self.assertEqual(label_summary(self.df).attrs["clips_with_multiple_events"], 1)
 
+    def test_no_integer_overflow_on_large_counts(self):
+        import pandas as pd
+        big = pd.concat([self.df] * 100, ignore_index=True)  # 800 clips
+        b = binarize(big, ["SoundRep", "Prolongation"])
+        co = b.T @ b
+        self.assertEqual(int(co.loc["SoundRep", "SoundRep"]), 200)
+        self.assertTrue((co.to_numpy() >= 0).all())
+
     def test_exclude_unusable(self):
         self.assertEqual(len(exclude_unusable(self.df)), 7)
 
