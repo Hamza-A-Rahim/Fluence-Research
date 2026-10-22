@@ -3,10 +3,10 @@
 | Field | Value |
 |---|---|
 | Date | 2026-10-21 |
-| Status | **Part A complete (wav2vec2-base-960h)**; Part B (XLSR-53) extraction running |
+| Status | **Complete** (Part A: wav2vec2-base-960h; Part B: XLSR-53) |
 | Test set | **not evaluated** |
-| Embeddings | Extracted on a desktop PC: `scripts/extract_embeddings.py`, torch 2.14.1+cpu, transformers 5.20.2, Python 3.12.10, Windows 11, 32 threads. Model revision not captured by this transformers version (D-010 note; back-fill with `scripts/record_model_revisions.py`). |
-| Training | `scripts/train_embeddings.py`, run in a cloud environment on the PC's embedding shards (Python 3.13, scikit-learn 1.9.1). |
+| Embeddings | Extracted on a desktop PC: `scripts/extract_embeddings.py`, torch 2.14.1+cpu, transformers 5.20.2, Python 3.12.10, Windows 11, 32 threads. Revisions (back-filled from the local HF cache): base-960h `22aad52d435eb6dbaf354bdad9b0da84ce7d6156`, XLSR-53 `c3f9d884181a224a6ac87bf8885c84d1cff3384f`. |
+| Training | `scripts/train_embeddings.py`. Part A run in a cloud environment on the PC's embedding shards (Python 3.13, scikit-learn 1.9.1); Part B run on the PC (Python 3.12.10, scikit-learn 1.9.1, commit `24da27e`, 90 s). |
 
 ## Objective
 EXP-001/002 concluded that clip-summary features, not the number of training speakers, limit performance: averaging over 3 s discards timing. Do contextual representations from a pretrained speech encoder do better under the identical protocol?
@@ -47,7 +47,29 @@ Every confidence interval lies entirely above the corresponding baseline value. 
 - Frozen features and a linear classifier; the published systems fine-tune the encoder, so these numbers are not directly comparable to theirs. Our train split also has 3 speakers and 74 % of SEP-28k (EXP-000).
 - wav2vec2-base-960h was fine-tuned for English ASR, so it may encode English-specific phonetics. Part B (XLSR-53, multilingual) tests whether that matters.
 
+## Part B: XLSR-53 (multilingual), layer 14
+
+Same protocol. Encoder `facebook/wav2vec2-large-xlsr-53` (pretrained without labels on 53 languages; not fine-tuned for ASR): 25 hidden-state layers, 1,024 dims, so 2,048 per clip after mean+std pooling. Layer sweep (dev AUC, any event, C = 0.01): rises to a plateau of 0.80–0.82 across layers 9–20, best **layer 14 (0.821)**, then drops sharply to ~0.74 in the last three layers (22–24). That is expected for a model pretrained only on a self-supervised objective, whose top layers specialise in that pretraining task.
+
+| Target | XLSR-53 dev AUC [95 % CI] | base-960h dev AUC | Baseline features | XLSR-53 dev-only CV | base-960h dev-only CV |
+|---|---|---|---|---|---|
+| Any event (incl. interjections) | **0.839** [0.824, 0.851] | 0.817 | 0.653 | 0.792 ± 0.013 | 0.803 ± 0.021 |
+| Any event (excl. interjections) | **0.825** [0.811, 0.840] | 0.791 | 0.632 | 0.780 ± 0.009 | 0.754 ± 0.020 |
+| Interjection | 0.906 [0.890, 0.923] | 0.905 | 0.711 | 0.877 ± 0.015 | 0.892 ± 0.017 |
+| Sound repetition | **0.878** [0.846, 0.900] | 0.856 | 0.678 | 0.798 ± 0.027 | 0.772 ± 0.040 |
+| Prolongation | **0.867** [0.844, 0.893] | 0.855 | 0.744 | 0.832 ± 0.026 | 0.792 ± 0.014 |
+| Word repetition | **0.850** [0.826, 0.879] | 0.826 | 0.641 | 0.830 ± 0.026 | 0.792 ± 0.028 |
+| Block | **0.745** [0.718, 0.769] | 0.714 | 0.608 | 0.699 ± 0.032 | 0.657 ± 0.042 |
+
+Dev F1 for "any event, incl. interjections": 0.767 (base 0.740; always-event 0.697). Figure: `outputs/EXP-003/comparison.png` (`scripts/plot_comparison.py`).
+
+### Part B interpretation
+1. **The multilingual encoder is at least as good as the English ASR model on English stuttered speech, and modestly better on the core stuttering events.** On dev it is higher on every target except interjection (tie); in dev-only CV it is higher on all four core events (prolongation, sound repetition, word repetition, block) and on "any event excl. interjections", but slightly lower on interjections and on "any event incl. interjections".
+2. **The differences are small (≈ 0.01–0.04 AUC) and the confidence intervals overlap.** We have *not* shown a statistically reliable difference between the two encoders. A paired comparison on the same clips (bootstrap over speakers of the AUC difference) is needed before claiming one.
+3. A plausible reading, still to be tested: the English model was fine-tuned to transcribe *words*, which helps with interjections ("um" is close to a word) but may smooth over sub-word disruptions. XLSR-53 was never trained to transcribe, so it may keep more acoustic detail about blocks, prolongations and part-word repetitions.
+4. **Relevance to the research question:** a multilingual encoder loses nothing on English, which supports using XLSR-53 for the Urdu/Hindi transfer experiments, consistent with Haas & Bayerl (2026).
+
 ## Next steps
-- Part B: same run for `facebook/wav2vec2-large-xlsr-53` when extraction finishes.
+- Paired speaker-bootstrap test of XLSR-53 vs base-960h on dev (same clips) before claiming a difference.
 - Threshold calibration per event on dev (F1 still uses 0.5).
 - Then decide the model to take to the single held-out test evaluation.
