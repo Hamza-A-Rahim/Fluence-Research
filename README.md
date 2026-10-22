@@ -4,7 +4,7 @@
 
 Fluence is an independent research project by Hamza Rahim (Aitchison College, Lahore). It aims to build and rigorously evaluate machine-learning models that flag possible stuttering events — sound and word repetitions, prolongations, blocks and interjections — and, later, to test how well models trained on English speech transfer to Urdu-English bilingual speakers.
 
-> **Status: Phase 1 (foundations).** The audio-processing pipeline is implemented and tested. **No model has been trained yet, and no performance results exist.** Any number that appears in this repository in future will come from a logged, reproducible experiment.
+> **Status: Stages 1–4 complete.** Every number in this repository comes from a logged, reproducible experiment in [`research/experiment_logs/`](research/experiment_logs/). The SEP28k-E test set has been used once (EXP-004) and must not be reused.
 
 > **Not a medical tool.** Fluence is experimental research software. It does not diagnose, assess or treat stuttering, and its outputs must not be used for clinical decisions.
 
@@ -28,6 +28,7 @@ Fluence is an independent research project by Hamza Rahim (Aitchison College, La
 | Per-event (multi-label) detection | ✅ [EXP-002](research/experiment_logs/EXP-002_per_event.md): prolongation easiest (0.74), block hardest (0.60) |
 | Listening check page (M1) | ✅ `scripts/listen_examples.py` |
 | Pretrained encoders (wav2vec 2.0, frozen) | ✅ [EXP-003](research/experiment_logs/EXP-003_wav2vec2.md): dev ROC-AUC 0.653 → **0.817** (English base) / **0.839** (multilingual XLSR-53); every event improves |
+| **Final held-out test (pre-registered, run once)** | ✅ [EXP-004](research/experiment_logs/EXP-004_test_set.md): XLSR-53 test ROC-AUC **0.831** [0.813, 0.849] on 142 unseen speakers vs 0.643 for hand-made features |
 | Web interface, backend API | ⏳ deliberately deferred until a baseline is evaluated |
 
 ## Repository layout
