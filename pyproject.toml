@@ -26,6 +26,8 @@ audio-extras = ["librosa>=0.10", "soundfile>=0.12"]
 fetch = ["imageio-ffmpeg>=0.5"]
 # Stage 4. Install PyTorch first from https://download.pytorch.org (see docs/setup_windows.md).
 deep = ["transformers>=4.40"]
+# Stage 7 local demo API (backend/). httpx is only for its tests.
+web = ["fastapi>=0.110", "uvicorn>=0.29", "python-multipart>=0.0.9", "imageio-ffmpeg>=0.5", "httpx>=0.27"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

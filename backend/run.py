@@ -1,0 +1,16 @@
+"""Start the local demo API on 127.0.0.1:8000 (never on a public interface).
+
+    python backend/run.py
+"""
+
+import sys
+from pathlib import Path
+
+import uvicorn
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "backend"))
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, log_level="info", access_log=False)

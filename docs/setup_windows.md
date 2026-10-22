@@ -96,3 +96,19 @@ python scripts/localize.py                  # analysis + figures (minutes)
 ```
 All three are resumable. Results: `outputs\EXP-005\`.
 
+
+## Stage 7: local demo interface
+
+Needs Node.js 20+ (`node --version`). Two terminals, both from the repo root:
+```powershell
+# terminal 1: engine
+pip install -e ".[web]"
+python scripts/export_demo_model.py         # once; verifies the classifiers against EXP-005
+python backend/run.py                       # http://127.0.0.1:8000, model loads in a few seconds
+
+# terminal 2: interface
+cd frontend
+npm install                                 # once
+npm run dev                                 # open http://127.0.0.1:3000
+```
+Both bind to 127.0.0.1 only. A 30 s recording takes about 20 s on the i9 CPU.
