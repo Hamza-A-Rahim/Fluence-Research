@@ -85,3 +85,14 @@ python scripts/train_embeddings.py --model facebook/wav2vec2-base-960h
 python scripts/train_embeddings.py --model facebook/wav2vec2-large-xlsr-53
 ```
 
+## Stage 5: localisation (EXP-005)
+
+```powershell
+git pull
+pytest
+python scripts/fetch_context.py             # re-downloads 108 dev-only episodes, keeps ±1.5 s around each dev clip (~30–60 min)
+python scripts/extract_windows.py           # XLSR-53 windows: ~19,500 shifted windows + 3 episode timelines (~1–2 h)
+python scripts/localize.py                  # analysis + figures (minutes)
+```
+All three are resumable. Results: `outputs\EXP-005\`.
+

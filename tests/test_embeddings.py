@@ -107,3 +107,22 @@ class TestRealModelCodePath(unittest.TestCase):
         self.assertEqual(mean.shape, (3, 3, 32))   # 3 clips, 2 layers + CNN output, 32 dims
         self.assertEqual(std.shape, (3, 3, 32))
         self.assertTrue(np.isfinite(mean).all())
+
+
+@unittest.skipUnless(__import__("importlib").util.find_spec("torch")
+                     and __import__("importlib").util.find_spec("transformers"),
+                     "PyTorch/transformers not installed")
+class TestWindowExtractorCodePath(unittest.TestCase):
+    def test_embed_layer_keeps_one_layer(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from transformers import Wav2Vec2Config, Wav2Vec2FeatureExtractor, Wav2Vec2Model
+        from extract_windows import embed_layer
+        cfg = Wav2Vec2Config(hidden_size=32, num_hidden_layers=2, num_attention_heads=2, intermediate_size=64,
+                             conv_dim=(16, 16), conv_kernel=(10, 3), conv_stride=(5, 2),
+                             num_conv_pos_embeddings=16, num_conv_pos_embedding_groups=2)
+        model = Wav2Vec2Model(cfg).eval()
+        fe = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16000, padding_value=0.0, do_normalize=True)
+        waves = [np.random.default_rng(i).standard_normal(48000).astype(np.float32) * 0.1 for i in range(5)]
+        m, s = embed_layer(fe, model, waves, "cpu", layer=2, batch=2)  # batches of 2, 2, 1
+        self.assertEqual(m.shape, (5, 32))
+        self.assertEqual(s.shape, (5, 32))

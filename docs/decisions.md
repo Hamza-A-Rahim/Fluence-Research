@@ -15,6 +15,7 @@ Short records of choices that shape the project. Once **Decided**, we move on; r
 | D-009 | Stage 2 baseline: logistic regression on clip-summary features | Decided |
 | D-010 | Stage 4 encoders: wav2vec2-base-960h and XLSR-53, frozen, mean+std pooled | Decided |
 | D-011 | Cross-validation excludes the SEP28k-E test clips (correction) | Decided |
+| D-012 | Stage 5 design: offset-robustness on dev-only episodes, not timestamp accuracy | Decided |
 
 ---
 
@@ -50,4 +51,7 @@ Extract frozen embeddings from two wav2vec 2.0 models: **facebook/wav2vec2-base-
 
 ### D-011 — Cross-validation must not touch the test set (correction, 2026-10-21)
 **Error found:** the SEP-12k partition is exactly SEP28k-E dev ∪ test (verified: 3,855 dev + 3,965 test clips). The SEP-12k cross-validation in EXP-001, EXP-002 and the first EXP-003 run therefore trained and scored on held-out test clips. No hyper-parameters were tuned on those runs, but design conclusions (e.g. "features, not speaker count, are the bottleneck") partly drew on them. **Fix:** CV now uses only the SEP28k-E dev clips (`fluence.data.datasets.cv_pool`): 3,855 clips, 136 speakers. All CV results were re-run and the logs corrected; the superseded numbers are kept in each log, marked as such. The SEP28k-E test set has never been used for model selection and remains unevaluated.
+
+### D-012 — Stage 5 design (2026-10-22)
+SEP-28k labels 3 s clips at known positions but gives no timing *inside* a clip, so precise event timestamps cannot be validated with this data. Stage 5 therefore asks the question the data can answer: **does the detector still work on unsegmented audio, when its 3 s window is not aligned to a labelled clip?** For each dev clip, 3 s windows are taken at offsets −1.5 … +1.5 s (0.5 s steps) from the clip start, plus sliding-max/mean aggregation, and whole-episode timelines for 3 demo episodes. Only the 108 episodes containing dev clips and **no test clips** are used (the test set is spent). The model is the frozen EXP-004 primary system (XLSR-53 layer 14, same C), trained on train clips only. Re-downloading these episodes keeps only ±1.5 s context around each dev clip (~0.6 GB) to avoid storing 85 h of audio. True timestamp evaluation needs data with word-level timing (e.g. Boli, if licensed) and is deferred.
 
