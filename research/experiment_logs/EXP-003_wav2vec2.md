@@ -70,6 +70,18 @@ Dev F1 for "any event, incl. interjections": 0.767 (base 0.740; always-event 0.6
 4. **Relevance to the research question:** a multilingual encoder loses nothing on English, which supports using XLSR-53 for the Urdu/Hindi transfer experiments, consistent with Haas & Bayerl (2026).
 
 ## Next steps
-- Paired speaker-bootstrap test of XLSR-53 vs base-960h on dev (same clips) before claiming a difference.
+- ~~Paired test~~ **done** (`scripts/compare_encoders.py`, `outputs/EXP-003/paired_comparison.md`, 2,000 speaker resamples on the same dev clips; A = base-960h, B = XLSR-53):
+
+| Target | AUC A | AUC B | B − A [95 % CI] | p(B ≤ A) |
+|---|---|---|---|---|
+| any_with_interjections | 0.817 | 0.839 | +0.022 [+0.010, +0.036] | 0.000 |
+| any_without_interjections | 0.791 | 0.825 | +0.034 [+0.019, +0.053] | 0.000 |
+| Prolongation | 0.855 | 0.867 | +0.012 [-0.007, +0.034] | 0.096 |
+| Block | 0.714 | 0.745 | +0.031 [+0.011, +0.053] | 0.002 |
+| SoundRep | 0.856 | 0.878 | +0.021 [+0.005, +0.040] | 0.005 |
+| WordRep | 0.826 | 0.850 | +0.024 [+0.002, +0.050] | 0.017 |
+| Interjection | 0.905 | 0.906 | +0.001 [-0.008, +0.009] | 0.457 |
+
+  XLSR-53 is reliably better on dev for both "any event" targets, block, sound repetition and word repetition (CIs exclude 0); no reliable difference for prolongation or interjection. Seven targets were tested without correction, and the layer and C were chosen on these same dev clips, so the test set (EXP-004) is the confirmatory check.
 - Threshold calibration per event on dev (F1 still uses 0.5).
 - Then decide the model to take to the single held-out test evaluation.

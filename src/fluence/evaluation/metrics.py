@@ -84,6 +84,42 @@ def speaker_bootstrap_auc_ci(y_true, y_score, speakers, n_boot: int = 1000, seed
     return float(lo), float(hi)
 
 
+def paired_auc_difference(y_true, score_a, score_b, speakers, n_boot: int = 2000, seed: int = 0,
+                          alpha: float = 0.05) -> dict:
+    """AUC(b) - AUC(a) on the same clips, with a speaker-level paired bootstrap.
+
+    Each resample draws speakers with replacement and recomputes both AUCs on
+    the same clips, so shared difficulty cancels out. Returns the observed
+    difference, its percentile CI, and the share of resamples where b <= a
+    (a one-sided bootstrap p-value for "b is better").
+    """
+    y = np.asarray(y_true).astype(int)
+    a, b = np.asarray(score_a, float), np.asarray(score_b, float)
+    speakers = np.asarray(speakers).astype(str)
+    uniq = np.unique(speakers)
+    idx_by_spk = {s: np.flatnonzero(speakers == s) for s in uniq}
+    rng = np.random.default_rng(seed)
+    diffs = []
+    for _ in range(n_boot):
+        idx = np.concatenate([idx_by_spk[s] for s in rng.choice(uniq, size=len(uniq), replace=True)])
+        if 0 < y[idx].sum() < len(idx):
+            diffs.append(roc_auc_score(y[idx], b[idx]) - roc_auc_score(y[idx], a[idx]))
+    diffs = np.array(diffs)
+    lo, hi = np.quantile(diffs, [alpha / 2, 1 - alpha / 2])
+    return {"auc_a": float(roc_auc_score(y, a)), "auc_b": float(roc_auc_score(y, b)),
+            "diff": float(roc_auc_score(y, b) - roc_auc_score(y, a)),
+            "ci": (float(lo), float(hi)), "p_b_not_better": float(np.mean(diffs <= 0)),
+            "n_boot_used": int(len(diffs))}
+
+
+def best_f1_threshold(y_true, y_score) -> float:
+    """Threshold maximising F1 (choose on dev only, then freeze)."""
+    from sklearn.metrics import precision_recall_curve
+    p, r, t = precision_recall_curve(np.asarray(y_true).astype(int), y_score)
+    f1 = 2 * p[:-1] * r[:-1] / np.maximum(p[:-1] + r[:-1], 1e-12)
+    return float(t[int(np.argmax(f1))])
+
+
 def speaker_bootstrap_ci(y_true, y_pred, speakers, metric: str = "f1",
                          n_boot: int = 1000, seed: int = 0, alpha: float = 0.05) -> tuple[float, float]:
     """Percentile CI for a metric, resampling speakers with replacement."""

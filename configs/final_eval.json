@@ -1,0 +1,109 @@
+{
+  "purpose": "Pre-registered configuration for the single SEP28k-E test evaluation (EXP-004).",
+  "frozen_utc": "2026-10-22T05:12:54+00:00",
+  "frozen_from_commit": "9b758ba (uncommitted changes)",
+  "primary_system": "facebook/wav2vec2-large-xlsr-53",
+  "primary_rationale": "Chosen on dev only: highest SEP28k-E dev ROC-AUC on 6 of 7 targets; paired speaker-bootstrap on dev shows XLSR-53 > base-960h on any-event (both), block, sound and word repetition (95% CIs exclude 0); multilingual pretraining is the relevant encoder for the planned Urdu/Hindi transfer work. The other two systems are evaluated alongside for context, not for selection.",
+  "targets": [
+    "any_with_interjections",
+    "any_without_interjections",
+    "Prolongation",
+    "Block",
+    "SoundRep",
+    "WordRep",
+    "Interjection"
+  ],
+  "training_data": "SEP28k-E train only (as in development)",
+  "model": "logistic regression, class-balanced, standardised, seed 0",
+  "label_rule": ">= 2 of 3 annotators",
+  "systems": {
+    "baseline_features": {
+      "features": {
+        "type": "baseline"
+      },
+      "C": {
+        "any_with_interjections": 0.1,
+        "any_without_interjections": 0.1,
+        "Prolongation": 10.0,
+        "Block": 0.1,
+        "SoundRep": 0.01,
+        "WordRep": 1.0,
+        "Interjection": 0.1
+      },
+      "threshold": {
+        "any_with_interjections": 0.21929831802845,
+        "any_without_interjections": 0.2869911789894104,
+        "Prolongation": 0.6960896849632263,
+        "Block": 0.6099472641944885,
+        "SoundRep": 0.5766326785087585,
+        "WordRep": 0.5649803280830383,
+        "Interjection": 0.5448387861251831
+      }
+    },
+    "facebook/wav2vec2-base-960h": {
+      "features": {
+        "type": "embedding",
+        "model": "facebook/wav2vec2-base-960h",
+        "layer": 10,
+        "pooling": "mean+std",
+        "revision": "22aad52d435eb6dbaf354bdad9b0da84ce7d6156"
+      },
+      "C": {
+        "any_with_interjections": 0.01,
+        "any_without_interjections": 0.001,
+        "Prolongation": 0.001,
+        "Block": 0.001,
+        "SoundRep": 0.001,
+        "WordRep": 0.001,
+        "Interjection": 0.001
+      },
+      "threshold": {
+        "any_with_interjections": 0.3359498381614685,
+        "any_without_interjections": 0.4457481801509857,
+        "Prolongation": 0.6390076875686646,
+        "Block": 0.5891715288162231,
+        "SoundRep": 0.6588141322135925,
+        "WordRep": 0.639556884765625,
+        "Interjection": 0.5244563817977905
+      }
+    },
+    "facebook/wav2vec2-large-xlsr-53": {
+      "features": {
+        "type": "embedding",
+        "model": "facebook/wav2vec2-large-xlsr-53",
+        "layer": 14,
+        "pooling": "mean+std",
+        "revision": "c3f9d884181a224a6ac87bf8885c84d1cff3384f"
+      },
+      "C": {
+        "any_with_interjections": 0.001,
+        "any_without_interjections": 0.001,
+        "Prolongation": 0.001,
+        "Block": 0.001,
+        "SoundRep": 0.001,
+        "WordRep": 0.01,
+        "Interjection": 0.001
+      },
+      "threshold": {
+        "any_with_interjections": 0.3563295304775238,
+        "any_without_interjections": 0.41143152117729187,
+        "Prolongation": 0.6399970650672913,
+        "Block": 0.6433378458023071,
+        "SoundRep": 0.6551560759544373,
+        "WordRep": 0.6955344676971436,
+        "Interjection": 0.5349730849266052
+      }
+    }
+  },
+  "primary_metric": "ROC-AUC with 95% speaker-bootstrap CI",
+  "secondary": [
+    "PR-AUC",
+    "F1 at the frozen dev threshold",
+    "F1 at 0.5",
+    "paired AUC differences: primary vs each other system"
+  ],
+  "notes": [
+    "Encoder C values sit at the lower edge (0.001) of the dev search grid {0.001, 0.01, 0.1, 1}; stronger regularisation was not explored. Recorded as a limitation, not changed after freezing.",
+    "Thresholds maximise F1 on SEP28k-E dev; ROC-AUC (threshold-free) is the primary metric."
+  ]
+}
