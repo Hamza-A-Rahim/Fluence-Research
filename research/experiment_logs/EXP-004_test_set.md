@@ -4,9 +4,9 @@
 |---|---|
 | Date | 2026-10-22 (run 05:13 UTC) |
 | Status | **complete; test set now used** (logged in `outputs/TEST_SET_EVALUATIONS.log`) |
-| Pre-registration | [`research/methodology/preregistration_EXP-004.md`](../methodology/preregistration_EXP-004.md) + [`configs/final_eval.json`](../../configs/final_eval.json), committed in `23d1804` before the run |
-| Run | `scripts/final_test_eval.py` at commit `23d1804` (clean), in a cloud environment, on features and embeddings computed on the desktop PC. The script refuses an uncommitted config and a second run. |
-| Note | The config records `frozen_from_commit: 9b758ba (uncommitted changes)` because it was generated while the new scripts were not yet committed. It was then committed unchanged, apart from back-filling the base-960h revision and adding two limitation notes, before the evaluation. |
+| Pre-registration | [`research/methodology/preregistration_EXP-004.md`](../methodology/preregistration_EXP-004.md) + [`configs/final_eval.json`](../../configs/final_eval.json), committed in `49bfec8` before the run |
+| Run | `scripts/final_test_eval.py` at commit `49bfec8` (clean; see D-013), in a cloud environment, on features and embeddings computed on the desktop PC. The script refuses an uncommitted config and a second run. |
+| Note | The config records `frozen_from_commit: 9b758ba (uncommitted changes)` (now `9aedf62`, see D-013) because it was generated while the new scripts were not yet committed. It was then committed unchanged, apart from back-filling the base-960h revision and adding two limitation notes, before the evaluation. |
 
 ## Setup
 All three pre-registered systems: logistic regression trained on SEP28k-E **train only** (11,696 clips, 3 speakers), settings and thresholds frozen from dev. Evaluated once on SEP28k-E **test**: 3,965 clips, **142 speakers never used in any development step**.

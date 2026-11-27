@@ -16,6 +16,7 @@ Short records of choices that shape the project. Once **Decided**, we move on; r
 | D-010 | Stage 4 encoders: wav2vec2-base-960h and XLSR-53, frozen, mean+std pooled | Decided |
 | D-011 | Cross-validation excludes the SEP28k-E test clips (correction) | Decided |
 | D-012 | Stage 5 design: offset-robustness on dev-only episodes, not timestamp accuracy | Decided |
+| D-013 | Commit references after history rewrite | Decided |
 
 ---
 
@@ -55,3 +56,13 @@ Extract frozen embeddings from two wav2vec 2.0 models: **facebook/wav2vec2-base-
 ### D-012 — Stage 5 design (2026-10-22)
 SEP-28k labels 3 s clips at known positions but gives no timing *inside* a clip, so precise event timestamps cannot be validated with this data. Stage 5 therefore asks the question the data can answer: **does the detector still work on unsegmented audio, when its 3 s window is not aligned to a labelled clip?** For each dev clip, 3 s windows are taken at offsets −1.5 … +1.5 s (0.5 s steps) from the clip start, plus sliding-max/mean aggregation, and whole-episode timelines for 3 demo episodes. Only the 108 episodes containing dev clips and **no test clips** are used (the test set is spent). The model is the frozen EXP-004 primary system (XLSR-53 layer 14, same C), trained on train clips only. Re-downloading these episodes keeps only ±1.5 s context around each dev clip (~0.6 GB) to avoid storing 85 h of audio. True timestamp evaluation needs data with word-level timing (e.g. Boli, if licensed) and is deferred.
 
+### D-013 — Commit references after history rewrite (2026-11-27)
+The repository history was rewritten to correct commit author metadata, drop a local notes file and remove personal notes from the documentation in older commits. Code, data handling and results are unchanged, but every commit ID changed. Commit IDs in the experiment logs now point to the rewritten commits. Older references, such as `frozen_from_commit` in the frozen `configs/final_eval.json` and the commit recorded in generated `outputs/` reports, map as follows:
+
+| Old ID | New ID | Used by |
+|---|---|---|
+| `f3d7431` | `a9af275` | EXP-001 (the old commit only added the notes file; its code is identical to `a9af275`) |
+| `24da27e` | `1261555` | EXP-003 part B training |
+| `9b758ba` | `9aedf62` | `frozen_from_commit` in `configs/final_eval.json` |
+| `23d1804` | `49bfec8` | EXP-004 pre-registration and test run |
+| `668038c` | `ee87980` | EXP-005 |

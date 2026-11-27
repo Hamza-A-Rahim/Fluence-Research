@@ -4,7 +4,7 @@
 |---|---|
 | Date | 2026-10-21 |
 | Status | complete (development); **test set not evaluated** |
-| Git commit | `f3d7431` |
+| Git commit | `a9af275` (see D-013) |
 | Run on | Windows 11 laptop, Python 3.12.10, numpy 2.5.4, scikit-learn 1.9.1 |
 | Scripts | `scripts/train_baseline.py` (default and `--partition SEP12k`), figures: `scripts/plot_baseline.py` |
 

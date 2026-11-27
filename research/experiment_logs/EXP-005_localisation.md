@@ -4,7 +4,7 @@
 |---|---|
 | Date | 2026-10-22 (extraction) / 2026-10-23 (analysis) |
 | Status | complete |
-| Git commit | `668038c` (clean working tree: yes) |
+| Git commit | `ee87980` (clean working tree: yes; see D-013) |
 | Design | D-012 |
 | Run | `fetch_context.py` → `extract_windows.py` → `localize.py`, on the desktop PC. Full output: `outputs/EXP-005/report.md`, `metrics.json`, figures |
 

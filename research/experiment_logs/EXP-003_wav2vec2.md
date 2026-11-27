@@ -6,7 +6,7 @@
 | Status | **Complete** (Part A: wav2vec2-base-960h; Part B: XLSR-53) |
 | Test set | **not evaluated** |
 | Embeddings | Extracted on a desktop PC: `scripts/extract_embeddings.py`, torch 2.14.1+cpu, transformers 5.20.2, Python 3.12.10, Windows 11, 32 threads. Revisions (back-filled from the local HF cache): base-960h `22aad52d435eb6dbaf354bdad9b0da84ce7d6156`, XLSR-53 `c3f9d884181a224a6ac87bf8885c84d1cff3384f`. |
-| Training | `scripts/train_embeddings.py`. Part A run in a cloud environment on the PC's embedding shards (Python 3.13, scikit-learn 1.9.1); Part B run on the PC (Python 3.12.10, scikit-learn 1.9.1, commit `24da27e`, 90 s). |
+| Training | `scripts/train_embeddings.py`. Part A run in a cloud environment on the PC's embedding shards (Python 3.13, scikit-learn 1.9.1); Part B run on the PC (Python 3.12.10, scikit-learn 1.9.1, commit `1261555`, 90 s; see D-013). |
 
 ## Objective
 EXP-001/002 concluded that clip-summary features, not the number of training speakers, limit performance: averaging over 3 s discards timing. Do contextual representations from a pretrained speech encoder do better under the identical protocol?

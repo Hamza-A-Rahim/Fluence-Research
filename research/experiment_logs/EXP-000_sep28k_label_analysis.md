@@ -70,7 +70,7 @@ Audio retrieved locally with `scripts/fetch_sep28k.py` (log: `data/metadata/sep2
 
 - **Episodes:** 258 retrieved (248 ok + 10 length-mismatch) of 385; 127 unavailable — StrongVoices (35, HTTP 404), StutteringIsCool (85, 404), IStutterSoWhat (5, HTTP 522 server not responding), MyStutteringLife (2, 404).
 - **Clips:** 20,896 of 28,177 (74.2 %); **19,516 usable** after quality exclusions (vs 26,215).
-- **Length mismatches are benign.** In all 10 cases the downloaded file is only 0.14–0.46 s shorter than the end of the last labelled clip, so exactly one final clip per episode was dropped. A shortfall this small is consistent with MP3 decoder padding differences, not re-edited episodes; re-edits would shift by seconds or minutes. Earlier clips in these episodes are kept. *Still to do: the M1 listening check on a few clips from these episodes.*
+- **Length mismatches are benign.** In all 10 cases the downloaded file is only 0.14–0.46 s shorter than the end of the last labelled clip, so exactly one final clip per episode was dropped. A shortfall this small is consistent with MP3 decoder padding differences, not re-edited episodes; re-edits would shift by seconds or minutes. Earlier clips in these episodes are kept. A clip from one of these episodes was checked by ear in M1; the alignment check was inconclusive.
 
 **Label balance — published vs retrieved (usable clips, ≥2 votes)**
 
